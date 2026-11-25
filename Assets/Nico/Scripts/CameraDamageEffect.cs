@@ -56,9 +56,16 @@ public class CameraDamageEffect : MonoBehaviour
 
     public float GetHealth() => health01;
 
-    public void SetHealth(float current, float max)
+    public bool SetHealth(float current, float max) // devuelve true si la vida ha bajado (para reproducir sonido de golpe)
     {
+        float oldHealth = health01;
         health01 = Mathf.Clamp01(current / max);
+        if(health01 < oldHealth)
+        {
+            Hit();
+            return true;
+        }
+        return false;
     }
 
     public void Hit(float strength = 1f)
@@ -66,14 +73,10 @@ public class CameraDamageEffect : MonoBehaviour
         hitPulse = Mathf.Clamp01(strength);
     }
 
+
     private void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
-        {
-            //daño provisional para probar el efecto
-            Hit();
-            SetHealth(health01 - 0.45f, 1f);
-        }
+        
             
         
         damage01 = Mathf.SmoothDamp(damage01, 1f - health01, ref damageVelocity, smoothTime);
