@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -53,6 +54,8 @@ public class CameraDamageEffect : MonoBehaviour
         }
     }
 
+    public float GetHealth() => health01;
+
     public void SetHealth(float current, float max)
     {
         health01 = Mathf.Clamp01(current / max);
@@ -65,7 +68,14 @@ public class CameraDamageEffect : MonoBehaviour
 
     private void Update()
     {
-        // Suaviza la transición para que el daño no cambie de golpe
+        if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
+        {
+            //daño provisional para probar el efecto
+            Hit();
+            SetHealth(health01 - 0.45f, 1f);
+        }
+            
+        
         damage01 = Mathf.SmoothDamp(damage01, 1f - health01, ref damageVelocity, smoothTime);
 
         hitPulse = Mathf.MoveTowards(hitPulse, 0f, Time.deltaTime * 2.5f);
@@ -78,7 +88,7 @@ public class CameraDamageEffect : MonoBehaviour
 
     private float UpdateGlitch()
     {
-        float lowHealth = Mathf.InverseLerp(glitchStartsBelow, 0f, health01); // 0..1
+        float lowHealth = Mathf.InverseLerp(glitchStartsBelow, 0f, health01); 
         if (lowHealth <= 0f) return 0f;
 
         glitchTimer += Time.deltaTime;
