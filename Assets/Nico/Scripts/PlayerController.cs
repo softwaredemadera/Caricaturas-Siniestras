@@ -21,8 +21,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxPitch = 85f;
     [SerializeField] private bool lockCursor = true;
 
+    [SerializeField] private float health = 3f;
+    private float maxHealth;
     private CharacterController controller;
-
+    private GameManager gameManager;
     private PlayerInput playerInput;
 
     private Vector3 horizontalVelocity;
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        gameManager = FindFirstObjectByType<GameManager>();
+        maxHealth = health;
 
         if (cameraPivot == null)
         {
@@ -54,8 +58,14 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Escape libera el cursor, click izquierdo lo vuelve a bloquear
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame) //daño provisional para probar el efecto
+        {
+            health -= maxHealth * 0.45f;
+            gameManager.SetHealth(health, maxHealth);
+        }
+
+
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) // Escape libera el cursor, click izquierdo lo vuelve a bloquear
             SetCursorLocked(false);
         if (lockCursor && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             SetCursorLocked(true);
@@ -91,12 +101,14 @@ public class PlayerController : MonoBehaviour
         Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
         float targetSpeed = playerInput.actions["Sprint"].IsPressed() ? sprintSpeed : walkSpeed;
 
-        Vector3 targetVelocity =
-            (transform.right * input.x + transform.forward * input.y) * targetSpeed;
+        Vector3 targetVelocity = (transform.right * input.x + transform.forward * input.y) * targetSpeed;
 
         // Aceleración suave
-        horizontalVelocity = Vector3.MoveTowards(
-            horizontalVelocity, targetVelocity, acceleration * Time.deltaTime * targetSpeed);
+        horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetVelocity, acceleration * Time.deltaTime * targetSpeed);
+
+        bool isMoving = input != Vector2.zero && controller.isGrounded; //logica para activar el sonido de pasos solo cuando el jugador se mueve y está en el suelo
+        float speedSteps = playerInput.actions["Sprint"].IsPressed() ? 2f : 1f;
+        gameManager.Walk(isMoving, speedSteps);
 
         // Gravedad y salto
         if (controller.isGrounded && verticalVelocity < 0f)
@@ -108,6 +120,7 @@ public class PlayerController : MonoBehaviour
         verticalVelocity += gravity * Time.deltaTime;
 
         Vector3 velocity = horizontalVelocity + Vector3.up * verticalVelocity;
+
         controller.Move(velocity * Time.deltaTime);
     }
 
