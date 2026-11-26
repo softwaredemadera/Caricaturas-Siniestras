@@ -14,15 +14,29 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject controlsPanel;
     [SerializeField] private GameObject creditsPanel;
 
-    // Duracion efecto fade
-    [SerializeField] private float fadeDuration = 0.2f;
-    [SerializeField] private float clickDelay = 0.12f;
-    private Coroutine panelTransition;
+    // Referencia a script PanelTransition
+    [SerializeField] private PanelTransition panelTransition;
 
+    private GameObject[] panels;
+
+    // Lista de paneles
     private void Awake()
+    {
+        panels = new[]
+        {
+            mainMenuPanel, settingsPanel, controlsPanel, creditsPanel
+        };
+    }
+
+    private void Start()
     {
         // Menu principal inicia activo
         ShowMainMenu();
+    }
+
+    private void ShowPanel(GameObject panelToShow)
+    {
+        panelTransition.ShowPanel(panels, panelToShow);
     }
 
     // Methods to show different panels
@@ -31,57 +45,6 @@ public class MenuManager : MonoBehaviour
     public void ShowControlsPanel() => ShowPanel(controlsPanel);
     public void ShowCreditsPanel() => ShowPanel(creditsPanel);
 
-    // Prevents that there are multiple transitions at the same time
-    private void ShowPanel(GameObject panelToShow)
-    {
-        if (panelTransition != null)
-            StopCoroutine(panelTransition);
-
-        panelTransition = StartCoroutine(ShowPanelWithFade(panelToShow));
-    }
-
-
-    // Coroutine to handle panel transitions with fade effect
-    private IEnumerator ShowPanelWithFade(GameObject panelToShow)
-    {
-        // Wait for a short delay
-        yield return new WaitForSecondsRealtime(clickDelay);
-
-        // Call event system if there is one
-        EventSystem.current?.SetSelectedGameObject(null);
-
-        // List of all panels to manage their visibility
-        GameObject[] panels = { mainMenuPanel, settingsPanel, controlsPanel, creditsPanel };
-
-        // Activate the target panel
-        foreach (GameObject panel in panels)
-            panel.SetActive(panel == panelToShow);
-
-        // Get the CanvasGroup component for fade effect
-        CanvasGroup group = panelToShow.GetComponent<CanvasGroup>();
-
-        // Panel starts fully transparent for fade-in effect
-        group.alpha = 0f;
-
-        // Fade in the panel over the specified duration
-        float elapsedTime = 0f;
-
-        // Repeat until the elapsed time reaches the fade duration
-        while (elapsedTime < fadeDuration)
-        {
-            // Increment elapsed time since the last frame
-            elapsedTime += Time.unscaledDeltaTime;
-            // Transform the fade to a value between 0 and 1 based on elapsed time
-            group.alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
-            // Wait for the next frame to update the fade effect
-            yield return null;
-        }
-
-        // Ensure the panel is fully visible at the end of the fade
-        group.alpha = 1f;
-
-        panelTransition = null;
-    }
 
     public void StartGame()
     {

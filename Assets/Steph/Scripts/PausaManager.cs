@@ -14,16 +14,21 @@ public class PausaManager : MonoBehaviour
     [SerializeField] private GameObject controlsPanel;
     [SerializeField] private GameObject confirmMainMenuPanel;
 
-    // Duración efecto fade
-    [SerializeField] private float fadeDuration = 0.2f;
-    [SerializeField] private float clickDelay = 0.12f;
-    private Coroutine panelTransition;
-
     private bool isPaused;
 
+    // Referencia a script PanelTransition
+    [SerializeField] private PanelTransition panelTransition;
+    private GameObject[] panels;
+    // Lista de paneles
     private void Awake()
     {
-        
+        panels = new[]
+        { pauseMenuPanel,
+          restartPanel,
+          settingsPanel,
+          controlsPanel,
+          confirmMainMenuPanel
+        };
     }
 
     private void Start()
@@ -32,6 +37,11 @@ public class PausaManager : MonoBehaviour
         Time.timeScale = 1f;
         // Juego comienza sin estar pausado
         isPaused = false;
+    }
+
+    private void ShowPanel(GameObject panelToShow)
+    {
+        panelTransition.ShowPanel(panels, panelToShow);
     }
 
     // Methods to show different panels
@@ -46,7 +56,7 @@ public class PausaManager : MonoBehaviour
         // Tiempo se restaura para evitar inicio en pausa
         Time.timeScale = 1f;
         // Carga la escena inicial
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("Movimiento Player");
     }
 
     // Regresa al menú principal
@@ -56,12 +66,16 @@ public class PausaManager : MonoBehaviour
         Time.timeScale = 1f;
 
         // Carga la escena del main menu
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("MainMenu");
     }
     
     // Pause the game
     public void ShowPauseMenu()
     {
+        // Libera el cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         ShowPanel(pauseMenuPanel);
 
         isPaused = true;
@@ -76,21 +90,16 @@ public class PausaManager : MonoBehaviour
     }
     public void BackToGame()
     {
+        // Vuelve a bloquear el curso
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         // Restaura el tiempo
         Time.timeScale = 1f;
         isPaused = false;
 
         //Oculta el menú de pausa
         pauseMenuPanel.SetActive(false);
-    }
-
-    // Prevents that there are multiple transitions at the same time
-    private void ShowPanel(GameObject panelToShow)
-    {
-        if (panelTransition != null)
-            StopCoroutine(panelTransition);
-
-        panelTransition = StartCoroutine(ShowPanelWithFade(panelToShow));
     }
 
     private void Update()
@@ -110,65 +119,19 @@ public class PausaManager : MonoBehaviour
     (controlsPanel != null && controlsPanel.activeSelf) ||
     (restartPanel != null && restartPanel.activeSelf) ||
     (confirmMainMenuPanel != null && confirmMainMenuPanel.activeSelf))
-        
+
         {
             return;
         }
-        
+
+        if (isPaused)
         {
-            // Si el juego esta en Pausa lo reanuda
-            if (isPaused)
-            {
-                BackToGame();
-            }
-
-            // Si el juego esta activo lo pausa
-            else
-            {
-                ShowPauseMenu();
-            }
+            BackToGame();
         }
-    }
-    // Coroutine to handle panel transitions with fade effect
-    private IEnumerator ShowPanelWithFade(GameObject panelToShow)
-    {
-        // Wait for a short delay
-        yield return new WaitForSecondsRealtime(clickDelay);
-
-        // Call event system if there is one
-        EventSystem.current?.SetSelectedGameObject(null);
-
-        // List of all panels to manage their visibility
-        GameObject[] panels = { pauseMenuPanel, restartPanel, settingsPanel, controlsPanel, confirmMainMenuPanel };
-
-        // Activate the target panel
-        foreach (GameObject panel in panels)
-            panel.SetActive(panel == panelToShow);
-
-        // Get the CanvasGroup component for fade effect
-        CanvasGroup group = panelToShow.GetComponent<CanvasGroup>();
-
-        // Panel starts fully transparent for fade-in effect
-        group.alpha = 0f;
-
-        // Fade in the panel over the specified duration
-        float elapsedTime = 0f;
-
-        // Repeat until the elapsed time reaches the fade duration
-        while (elapsedTime < fadeDuration)
+        else
         {
-            // Increment elapsed time since the last frame
-            elapsedTime += Time.unscaledDeltaTime;
-            // Transform the fade to a value between 0 and 1 based on elapsed time
-            group.alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
-            // Wait for the next frame to update the fade effect
-            yield return null;
+            ShowPauseMenu();
         }
-
-        // Ensure the panel is fully visible at the end of the fade
-        group.alpha = 1f;
-
-        panelTransition = null;
     }
 
 }

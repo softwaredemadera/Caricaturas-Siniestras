@@ -2613,6 +2613,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 440203268}
   m_CullTransparentMesh: 1
+--- !u!1 &480563911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 480563913}
+  - component: {fileID: 480563912}
+  m_Layer: 0
+  m_Name: PanelTransition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &480563912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480563911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0a7a54d65417b41baecbd56b91bf17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelTransition
+  fadeDuration: 0.5
+  clickDelay: 0.2
+--- !u!4 &480563913
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480563911}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000013909066, y: 0, z: -0, w: 1}
+  m_LocalPosition: {x: -639.3265, y: 0.00031433723, z: -740.162}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2128602164}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &489531157
 GameObject:
   m_ObjectHideFlags: 0
@@ -10147,8 +10193,7 @@ MonoBehaviour:
   settingsPanel: {fileID: 1643282881}
   controlsPanel: {fileID: 1899828155}
   confirmMainMenuPanel: {fileID: 1005964384}
-  fadeDuration: 0.2
-  clickDelay: 0.12
+  panelTransition: {fileID: 480563912}
 --- !u!4 &2128602164
 Transform:
   m_ObjectHideFlags: 0
@@ -10161,7 +10206,8 @@ Transform:
   m_LocalPosition: {x: 736.3603, y: -0.00032492715, z: 1636.545}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 480563913}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2143309647
