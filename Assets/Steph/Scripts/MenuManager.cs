@@ -19,7 +19,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private float clickDelay = 0.12f;
     private Coroutine panelTransition;
 
-    private void Start()
+    private void Awake()
     {
         // Menu principal inicia activo
         ShowMainMenu();
