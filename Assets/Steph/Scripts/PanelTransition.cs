@@ -8,6 +8,7 @@ public class PanelTransition : MonoBehaviour
     // Duración efecto fade
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float clickDelay = 0.12f;
+    [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     public Coroutine transition;
 
@@ -48,7 +49,9 @@ public class PanelTransition : MonoBehaviour
             // Increment elapsed time since the last frame
             elapsedTime += Time.unscaledDeltaTime;
             // Transform the fade to a value between 0 and 1 based on elapsed time
-            group.alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
+            
+            float progress = Mathf.Clamp01(elapsedTime / fadeDuration);
+            group.alpha = Mathf.Clamp01(fadeCurve.Evaluate(progress));
             // Wait for the next frame to update the fade effect
             yield return null;
         }
