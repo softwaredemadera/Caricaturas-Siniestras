@@ -4308,7 +4308,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Coproject manager \n& \nGame Programmer"
+  m_text: "Coproject manager \nArt \nGame Programmer"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 63da7b7fe5d157440be7cd01fb201fac, type: 2}
   m_sharedMaterial: {fileID: 7185486287493537680, guid: 63da7b7fe5d157440be7cd01fb201fac, type: 2}
@@ -7002,7 +7002,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Project manager \n& \nArt"
+  m_text: "Project manager  \nArt\nGame Designer"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 63da7b7fe5d157440be7cd01fb201fac, type: 2}
   m_sharedMaterial: {fileID: 7185486287493537680, guid: 63da7b7fe5d157440be7cd01fb201fac, type: 2}
