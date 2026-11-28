@@ -4,10 +4,11 @@ using UnityEngine.EventSystems;
 
 public class PanelTransition : MonoBehaviour
 {
-
-    // Duración efecto fade
+    [Header("Duración efecto fade")]
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float clickDelay = 0.12f;
+
+    [Header("Curva de animación")]
     [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     public Coroutine transition;

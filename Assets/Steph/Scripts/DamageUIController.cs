@@ -1,16 +1,28 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class DamageUIController : MonoBehaviour
 {
-    // Referencias a las imágenes de grietas
+    [Header("Referencias a las imágenes de grietas")]
     [SerializeField] private CanvasGroup golpeado;
     [SerializeField] private CanvasGroup herido;
     [SerializeField] private CanvasGroup muerto;
 
-    // Duración del fundido de entrada, en segundos
+    [Header("Elementos derrota")]
+    [SerializeField] private RawImage backGround;
+    [SerializeField] private GameObject panelDerrota;
+
+    [Header("Referencia a script PanelTransition")]
+    [SerializeField] private PanelTransition panelTransition;
+
+    [Header("Duración del fundido de entrada")]
     [SerializeField] private float fadeDuration = 0.2f;
+
+    [Header("Referencia a PausaManager")]
+    [SerializeField] private PausaManager pausaManager;
 
     // Arreglo que nos permite manejar las tres grietas en un ciclo
     private CanvasGroup[] grietas;
@@ -29,7 +41,24 @@ public class DamageUIController : MonoBehaviour
     // Estos métodos permiten llamar cada estado por separado
     public void ShowGolpeado() => Show(golpeado);
     public void ShowHerido() => Show(herido);
-    public void ShowMuerto() => Show(muerto);
+    public void ShowMuerto()
+    {
+        Show(muerto);
+        // Mostrar estatica de fondo
+        if (backGround != null)
+        {
+            Color color = backGround.color;
+            color.a = 1f;
+            backGround.color = color;
+
+            if (panelDerrota != null)
+                panelDerrota.SetActive(true);
+
+            if (pausaManager != null)
+            // Llama al metodo GameOver
+            pausaManager.ShowGameOver();
+        }
+    }
 
     public void HideStatus()
     {
@@ -108,4 +137,22 @@ public class DamageUIController : MonoBehaviour
         // Indicamos que ya no hay una corrutina de aparición activa
         aparicion = null;
     }
+
+    // LINEA DE PRUEBA DE EFECTO
+
+#if UNITY_EDITOR
+
+    private void Update()
+    {
+        if (Keyboard.current == null) return;
+
+        if (Keyboard.current.gKey.wasPressedThisFrame)
+            ShowGolpeado();
+        if (Keyboard.current.hKey.wasPressedThisFrame)
+            ShowHerido();
+        if (Keyboard.current.jKey.wasPressedThisFrame)
+            ShowMuerto();
+    }
+
+#endif
 }

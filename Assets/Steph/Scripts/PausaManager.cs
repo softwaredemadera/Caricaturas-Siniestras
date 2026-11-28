@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -14,11 +15,18 @@ public class PausaManager : MonoBehaviour
     [SerializeField] private GameObject controlsPanel;
     [SerializeField] private GameObject confirmMainMenuPanel;
 
+    // Referencia al HUD
+    [Header("Referencia al canvas InGame")]
+    [SerializeField] private GameObject hudInGame;
+
     private bool isPaused;
 
     // Referencia a script PanelTransition
     [SerializeField] private PanelTransition panelTransition;
     private GameObject[] panels;
+
+    private bool isGameOver;
+
     // Lista de paneles
     private void Awake()
     {
@@ -56,7 +64,7 @@ public class PausaManager : MonoBehaviour
         // Tiempo se restaura para evitar inicio en pausa
         Time.timeScale = 1f;
         // Carga la escena inicial
-        SceneManager.LoadScene("Movimiento Player");
+        SceneManager.LoadScene("PausaMenu");
     }
 
     // Regresa al menú principal
@@ -72,6 +80,9 @@ public class PausaManager : MonoBehaviour
     // Pause the game
     public void ShowPauseMenu()
     {
+
+        hudInGame.SetActive(false);
+
         // Libera el cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -100,10 +111,25 @@ public class PausaManager : MonoBehaviour
 
         //Oculta el menú de pausa
         pauseMenuPanel.SetActive(false);
+        hudInGame.SetActive(true);
+    }
+
+    //Metodo para final de la partida
+    public void ShowGameOver()
+    {
+        isGameOver = true;
+        Time.timeScale = 0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void Update()
     {
+        //Comprueba que no se pueda pausar mientras GameOver esta activo
+        if (isGameOver)
+            return;
+
         // Comprueba que haya teclado disponible
         if (Keyboard.current == null)
             return;

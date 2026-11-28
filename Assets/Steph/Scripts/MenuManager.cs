@@ -14,7 +14,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject controlsPanel;
     [SerializeField] private GameObject creditsPanel;
 
-    // Referencia a script PanelTransition
+   
+    [Header("Referencia a script PanelTransition")]
     [SerializeField] private PanelTransition panelTransition;
 
     private GameObject[] panels;
